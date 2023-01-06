@@ -9,6 +9,8 @@ import string
 import random
 import qrcode
 import MySQLdb as mdb
+import mysql.connector
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -26,47 +28,23 @@ path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
 def entrance():
     return("Scan the QR Code when you enter and leave the school")
 
-db = mdb.connect(host = 'KATKO', user = "DAS", passwd = "Daspbl2023")
-  # Check if connection was successful
+
+# db = mysql.connector.connect(host = 'KATKO:3306', user = "DAS", passwd = "Daspbl2023")
+db = mysql.connector.connect(host = '192.168.0.9', database = 'das', user = "admin", passwd = "FC3j@y68")
+
 if (db):
-    print ('Connection successful')
+    print('Connection successful')
 else:
     print('Connection unsuccessful')
     
-# cur = db.cursor()
-
-# cur.execute("SELECT * FROM YOUR_TABLE_NAME")
-
-# for row in cur.fetchall():
-#     print row[0]
-
-db.close()
-            
-def connect_database():
-    print("Hello")
-    try:
-        global connection
-        connection = mysql.connector.connect(host = 'KATKO', user = 'DAS', password = 'Daspbl2023')
-        if connection.is_connected():
-            db_Info = connection.get_server_info()
-            print("Connected to MySQL Server version ", db_Info)
-            cursor = connection.cursor()
-            cursor.execute("select database();")
-            record = cursor.fetchone()
-            print("You're connected to database: ", record)
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("MySQL connection is closed")
+mycursor = db.cursor()
 
 
 def delete_old_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/entrance/empty_qrcode.png')
         im.save(path)
+
 
 def get_random_string(length):
     letters = string.ascii_lowercase
@@ -92,8 +70,6 @@ def run_qr_generator():
 def run_school():
     school_thread = Thread(target = lambda: app.run(host = '0.0.0.0', port = 5000, debug = True, use_reloader = False), daemon = True)
     threads.append(school_thread)
-    database_thread = Thread(target = connect_database)
-    threads.append(database_thread)
     qr_delete_thread = Thread(target = delete_old_qr)
     threads.append(qr_delete_thread)
     qr_thread = Thread(target = run_qr_generator)
@@ -102,6 +78,7 @@ def run_school():
         thread.start()
     for thread in threads:
         thread.join()
+
 
 if __name__ == "__main__":
     run_school()
