@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from threading import Thread
 from PIL import Image
@@ -8,8 +8,13 @@ import os
 import string
 import random
 import qrcode
-import MySQLdb as mdb
 import mysql.connector
+import rsa
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import datetime
+import sys
+import codecs
 
 
 app = Flask(__name__)
@@ -24,13 +29,52 @@ threads = []
 path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
 
 
-@app.route('/entrance', methods=['GET'])
+# with open('backend/keys/publicKey.pem', 'rb') as p:
+#     public_key = rsa.PublicKey.load_pkcs1(p.read())
+# with open('backend/keys/privateKey.pem', 'rb') as p:
+#     private_key = rsa.PrivateKey.load_pkcs1(p.read())
+# with open('backend/keys/publicKey.pem', 'rb') as p:
+#     original_public_key = str(p.read())
+
+key_pair = RSA.generate(2048)
+
+public_key = key_pair.publickey().exportKey()
+private_key = key_pair.exportKey()
+
+print(public_key)
+print(type(public_key))
+print(private_key)
+    
+    
+@app.route('/publickey', methods=['GET'])
+def publicKey():
+    return(public_key)
+
+
+entrance_qr_string = ''
+
+@app.route('/sendentrancestring', methods=['GET'])
+def sendEntranceString():
+    return(entrance_qr_string)
+
+
+@app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
-    return("Scan the QR Code when you enter and leave the school")
+    data = request.get_json()
+    print(data['secretkey'])
+    data_string = str(data['secretkey'])
+    data_string = data_string.encode()
+    print(sys.getsizeof(data_string))
+    print(data_string)
+    global private_key
+    pr_key = RSA.importKey(private_key)
+    cipher = PKCS1_OAEP.new(pr_key)
+    decrypted = cipher.decrypt(data_string)
+    print(decrypted)
+    return {'success': True}
+    
 
-
-# db = mysql.connector.connect(host = 'KATKO:3306', user = "DAS", passwd = "Daspbl2023")
-db = mysql.connector.connect(host = '192.168.0.9', database = 'das', user = "admin", passwd = "FC3j@y68")
+db = mysql.connector.connect(host = 'sql7.freemysqlhosting.net', database = 'sql7588695', user = "sql7588695", passwd = "u3icbbgMbM")
 
 if (db):
     print('Connection successful')
@@ -40,7 +84,7 @@ else:
 mycursor = db.cursor()
 
 
-def delete_old_qr():
+def delete_old_entrance_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/entrance/empty_qrcode.png')
         im.save(path)
@@ -54,25 +98,30 @@ def get_random_string(length):
 
 s = sched.scheduler(time.time, time.sleep)
 
-def generate_qr(sc):
+def generate_entrance_qr(sc):
+    global entrance_qr_string
+    place = "entrance"
+    time = str(datetime.datetime.now())
     rand_string = get_random_string(8)
-    img = qrcode.make(rand_string)
+    qr_string = place + "/" + time + "/" + rand_string
+    entrance_qr_string = qr_string
+    img = qrcode.make(qr_string)
     img.save(path)
-    sc.enter(15, 1, generate_qr, (sc,))
+    sc.enter(15, 1, generate_entrance_qr, (sc,))
 
-s.enter(1, 1, generate_qr, (s,))
+s.enter(1, 1, generate_entrance_qr, (s,))
 
 
-def run_qr_generator():
+def run_entrance_qr_generator():
     s.run()
 
 
 def run_school():
     school_thread = Thread(target = lambda: app.run(host = '0.0.0.0', port = 5000, debug = True, use_reloader = False), daemon = True)
     threads.append(school_thread)
-    qr_delete_thread = Thread(target = delete_old_qr)
+    qr_delete_thread = Thread(target = delete_old_entrance_qr)
     threads.append(qr_delete_thread)
-    qr_thread = Thread(target = run_qr_generator)
+    qr_thread = Thread(target = run_entrance_qr_generator)
     threads.append(qr_thread)
     for thread in threads:
         thread.start()
