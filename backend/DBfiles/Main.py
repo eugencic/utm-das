@@ -48,6 +48,8 @@ if __name__=="__main__":
     # DBParinti.newparinte("123456789111", "Grigore Vasile", "P. Rares", "laurentiu","grisaVas@mail.com")
     # DBParinti.deleteparinte("Grigore Vasile")
     # print(DBParinti.allChilds("Eugen Nistru"))
+    # DBParinti.addChilds("Coseru Catalin", "Eugen Nistru ")
+    # DBParinti.changeemail("katko@gmail.com", "Eugen Nistru ")
 
 #crearea userului elev si a informatiilor despre acesta / stergerea datelor personale si username-ului
     # DBElevi.newuserelev("laur","laur")

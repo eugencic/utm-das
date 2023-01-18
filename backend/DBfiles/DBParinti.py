@@ -96,13 +96,15 @@ def addChilds(copil,name):
     try:
         cur.execute("SELECT id_elev FROM sql7588695.elevi WHERE (`nume_prenume` = '" + copil + "')")
         id_copil = cur.fetchall()
-        cur.execute("SELECT id_copii FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
-        parinte_copii_id = cur.fetchall()[0][0]
-        if parinte_copii_id == "None" :
+        cur.execute("SELECT id_copii,id_parinte FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        temp = list(cur.fetchall()[0])
+        parinte_copii_id = str(temp[0])
+        parinte_id = str(temp[1])
+
+        if parinte_copii_id == "None":
             parinte_copii_id = ''
 
-        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_copii`) "
-                "VALUES ('"+ parinte_copii_id + "," + str(id_copil[0][0]) + "');")
+        cur.execute("UPDATE `sql7588695`.`parinti` SET `id_copii` =  ('"+ parinte_copii_id + "," + str(id_copil[0][0]) + "') WHERE (`id_parinte` = '" + parinte_id +"');")
 
         cur.execute("SELECT * FROM sql7588695.parinti")
 
@@ -140,3 +142,31 @@ def allChilds(name):
 
     ans = parinte_copii_id.split(",")
     return ans
+
+def changeemail(new_post, name):
+    db = newConnect()
+    cur = db.cursor()
+    try:
+        cur.execute("SELECT id_parinte FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        parinte_id = cur.fetchall()[0][0]
+        cur.execute("UPDATE `sql7588695`.`parinti` SET `posta` =  '"+ new_post +"' WHERE `id_parinte` = '" + str(parinte_id) +"';")
+
+        cur.execute("SELECT * FROM sql7588695.parinti")
+
+        # print all the first cell of all the rows
+        for row in cur.fetchall():
+            for i in range(len(row)):
+                print(row[i], end='   |   ')
+            print()
+
+        for i in range(30):
+            print('#', end='#')
+        print()
+
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally:
+        cur.close()
+        db.close()
