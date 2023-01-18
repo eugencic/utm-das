@@ -243,7 +243,7 @@ def prezentaSemestru(nume_prenume):
     ans.append(matematicaAll(nume_prenume))
     ans[3].append("Matematica")
     ans.append(informaticaAll(nume_prenume))
-    ans[4].append("Inforamtica")
+    ans[4].append("Informatica")
     return ans
 
 def tuptolistConvert(tup):
@@ -252,3 +252,22 @@ def tuptolistConvert(tup):
         for x in t:
             result.append(x)
     return result
+
+def presenceObiect(tabel):
+    db = newConnect()
+    cur = db.cursor()
+    ans = []
+    try:
+        cur.execute("Select * from sql7588695." + str(tabel) + ";")
+        pres = cur.fetchall()
+        arr = list(pres)
+        ans = [list(ele) for ele in arr]
+    except:
+        pres = cur.fetchall()
+        print("Error")
+    finally:
+        cur.close()
+        db.close()
+
+    return ans
+

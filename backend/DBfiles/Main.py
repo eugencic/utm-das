@@ -39,14 +39,15 @@ if __name__=="__main__":
 
 #crearea userului prof si a informatiilor despre acesta , si stergerea datelor
     # DBProfi.newuserprof("Aceaus","Aceaus")
-    # DBProfi.newprof("Austenie Ceausescu","Programarea in retea","Aceaus")
+    # DBProfi.newprof("Austenie Ceausescu","romana","Aceaus")
     # DBProfi.deleteprof("Austenie Ceausescu")
 
 
 #crearea userului parinte si a informatiilor despre acesta , si stergerea datelor
     # DBParinti.newuserparinte("laurentiu", "laurentiu")
-    # DBParinti.newparinte("123456789111", "Grigore Vasile", "P. Rares", "laurentiu")
+    # DBParinti.newparinte("123456789111", "Grigore Vasile", "P. Rares", "laurentiu","grisaVas@mail.com")
     # DBParinti.deleteparinte("Grigore Vasile")
+    # print(DBParinti.allChilds("Eugen Nistru"))
 
 #crearea userului elev si a informatiilor despre acesta / stergerea datelor personale si username-ului
     # DBElevi.newuserelev("laur","laur")
@@ -56,8 +57,13 @@ if __name__=="__main__":
 # singIN
 #     print (LoghIN.signIn("laur2","laur1"))
 #     print(LoghIN.signIn("laur","laur"))
+
+# prezenta
 #     print(Presence.prezentaGenerala("Coseru Catalin","01.09"))
 #     print(Presence.prezentaSemestru("Coseru Catalin"))
+#     print(Presence.presenceObiect("engleza"))
 
 #sending emails
     # SendingEmail.sendEmail("First Try","kat.ko.sk.23@gmail.com")
+    # SendingEmail.sendParinti("Eugen Nistru")
+    # SendingEmail.sendProfesori("Austenie Ceausescu", "kat.ko.sk.23@gmail.com")

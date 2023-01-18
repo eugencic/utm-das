@@ -5,7 +5,7 @@ import hashlib
 # parametrii name_surname pentru numele si prenumele parintelui like "john Week"
 #            liceul pentru liceul unde invata copii sai :D
 #            username - username-ul dupa logare
-def newparinte(idnp, name_surname , liceu, username):
+def newparinte(idnp, name_surname , liceu, username, posta):
     db = newConnect()
     cur = db.cursor()
     try:
@@ -14,8 +14,8 @@ def newparinte(idnp, name_surname , liceu, username):
         cur.execute("SELECT id_liceu FROM sql7588695.licee WHERE (`denumire` = '" + liceu + "')")
         id_liceu = cur.fetchall()
 
-        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_parinte`,`idnp`,`nume_prenume`, `id_liceu`) "
-                "VALUES ('"+ str(id_prof[0][0]) + "', '" + idnp + "', '" + name_surname + "', '" + str(id_liceu[0][0]) +"');")
+        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_parinte`,`idnp`,`nume_prenume`, `id_liceu`, `posta`) "
+                "VALUES ('"+ str(id_prof[0][0]) + "', '" + idnp + "', '" + name_surname + "', '" + str(id_liceu[0][0]) + "', '" + str(posta) +"');")
 
         cur.execute("SELECT * FROM sql7588695.parinti")
 
@@ -123,3 +123,20 @@ def addChilds(copil,name):
     finally:
         cur.close()
         db.close()
+
+def allChilds(name):
+    db = newConnect()
+    cur = db.cursor()
+    try:
+        cur.execute("SELECT id_copii FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        parinte_copii_id = cur.fetchall()[0][0]
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally:
+        cur.close()
+        db.close()
+
+    ans = parinte_copii_id.split(",")
+    return ans

@@ -47,6 +47,8 @@ def newelev(idnp, name_surname , clasa, liceu, parinte, username):
         cur.execute("INSERT INTO `sql7588695`.`elevi` (`id_elev`,`idnp`,`nume_prenume`,`clasa`, `id_liceu`, `parinte`) "
                 "VALUES ('"+ str(id_elev) + "', '" + idnp + "', '" + name_surname + "', '" + str(clasa) + "', '" + str(id_liceu) + "', '" + str(id_parinte) + "');")
 
+        insertTables(str(id_elev),name_surname,db)
+
         cur.execute("SELECT * FROM sql7588695.elevi")
 
         # print all the first cell of all the rows
@@ -68,14 +70,20 @@ def newelev(idnp, name_surname , clasa, liceu, parinte, username):
         cur.close()
         db.close()
 
+# INSERT INTO `sql7588695`.`matematica` (`id_elev`, `nume_prenume`, `01.09`) VALUES ('6', 'Iana L', 'p');
+
+
 def deleteelev(name):
     db = newConnect()
     cur = db.cursor()
     cur.execute("SELECT id_elev FROM sql7588695.elevi WHERE (`nume_prenume` = '" + name + "')")
     id_elev = cur.fetchall()[0][0]
 
+    deleteTables(str(id_elev),db)
+
     cur.execute("DELETE FROM `sql7588695`.`elevi` WHERE(`nume_prenume` = '" + str(name) + "');")
     cur.execute("DELETE FROM `sql7588695`.`user_elevi` WHERE(`id_elev_user` = '" + str(id_elev) + "');")
+
 
 
     cur.execute("SELECT * FROM sql7588695.elevi")
@@ -93,3 +101,32 @@ def deleteelev(name):
     cur.close()
     db.close()
 
+def insertTables(id_elev, nume_prenume, db):
+    cur = db.cursor()
+    try:
+        cur.execute("INSERT INTO `sql7588695`.`matematica` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
+        cur.execute("INSERT INTO `sql7588695`.`romana` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
+        cur.execute("INSERT INTO `sql7588695`.`engleza` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
+        cur.execute("INSERT INTO `sql7588695`.`informatica` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
+
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally :
+        cur.close()
+
+def deleteTables(id_elev,db):
+    cur = db.cursor()
+    try:
+        cur.execute("DELETE FROM `sql7588695`.`matematica` WHERE (`id_elev` = '" + id_elev + "');")
+        cur.execute("DELETE FROM `sql7588695`.`romana` WHERE (`id_elev` = '" + id_elev + "');")
+        cur.execute("DELETE FROM `sql7588695`.`engleza` WHERE (`id_elev` = '" + id_elev + "');")
+        cur.execute("DELETE FROM `sql7588695`.`informatica` WHERE (`id_elev` = '" + id_elev + "');")
+
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally:
+        cur.close()
