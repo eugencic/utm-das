@@ -5,7 +5,10 @@ import DBParinti
 import DBProfi
 import NewDays
 import DbConnector
+import LoghIN
 import DBLicee
+import Presence
+import SendingEmail
 
 def main():
     db = DbConnector.newConnect()
@@ -50,4 +53,11 @@ if __name__=="__main__":
     # DBElevi.newelev("123456789000","Ion Vasile", "12", "P. Rares", "Grigore Vasile", "laur")
     # DBElevi.deleteelev("Ion Vasile")
 
-    str =
+# singIN
+#     print (LoghIN.signIn("laur2","laur1"))
+#     print(LoghIN.signIn("laur","laur"))
+#     print(Presence.prezentaGenerala("Coseru Catalin","01.09"))
+#     print(Presence.prezentaSemestru("Coseru Catalin"))
+
+#sending emails
+    # SendingEmail.sendEmail("First Try","kat.ko.sk.23@gmail.com")

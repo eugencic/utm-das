@@ -66,8 +66,8 @@ def newuserprof(username , passwd):
     cur = db.cursor()
     hash_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
 
-    cur.execute("INSERT INTO `sql7588695`.`user_profesor` (`username`, `passwd`) "
-                "VALUES ('" + username + "', '" + hash_passwd + "');")
+    cur.execute("INSERT INTO `sql7588695`.`user_profesor` (`username`, `passwd`, `rol`) "
+                "VALUES ('" + username + "', '" + hash_passwd + "', 'profesor');")
 
     cur.execute("SELECT * FROM sql7588695.user_profesor")
 

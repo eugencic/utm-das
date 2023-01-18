@@ -9,8 +9,8 @@ def newuserelev(username , passwd):
     cur = db.cursor()
     hash_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
 
-    cur.execute("INSERT INTO `sql7588695`.`user_elevi` (`username`, `passwd`) "
-                "VALUES ('" + username + "', '" + hash_passwd + "');")
+    cur.execute("INSERT INTO `sql7588695`.`user_elevi` (`username`, `passwd`, `rol`) "
+                "VALUES ('" + username + "', '" + hash_passwd  + "', 'elev');")
 
     cur.execute("SELECT * FROM sql7588695.user_elevi")
 
