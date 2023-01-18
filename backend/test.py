@@ -9,42 +9,61 @@ import sys
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-p_key = requests.get("http://127.0.0.1:5000/publickey")
-p_key = p_key.text
-p_key = RSA.importKey(p_key)
-print(p_key)
+# p_key = requests.get("http://127.0.0.1:5000/publickey")
+# p_key = p_key.text
+# p_key = RSA.importKey(p_key)
+# print(p_key)
 
-qr_message = requests.get("http://127.0.0.1:5000/sendentrancestring")
-qr_message = str(qr_message.text)
-print(qr_message)
+# qr_message = requests.get("http://127.0.0.1:5000/sendentrancestring")
+# qr_message = str(qr_message.text)
+# print(qr_message)
 
 
-# with open('keys/publicKey.pem', 'rb') as p:
-#     public_key = rsa.PublicKey.load_pkcs1(p.read())
-# with open('keys/privateKey.pem', 'rb') as p:
-#     private_key = rsa.PrivateKey.load_pkcs1(p.read())
+# # with open('keys/publicKey.pem', 'rb') as p:
+# #     public_key = rsa.PublicKey.load_pkcs1(p.read())
+# # with open('keys/privateKey.pem', 'rb') as p:
+# #     private_key = rsa.PrivateKey.load_pkcs1(p.read())
 
-idnp = str("0123456789")
+# idnp = str("0123456789")
 
-data_string = qr_message + idnp
+# data_string = qr_message + idnp
 
-cipher = PKCS1_OAEP.new(p_key)
-encrypted_message = cipher.encrypt(data_string.encode())
-print(encrypted_message)
-print(sys.getsizeof(encrypted_message))
-
-# encrypted_message = rsa.encrypt(data_string.encode(), public_key)
+# cipher = PKCS1_OAEP.new(p_key)
+# encrypted_message = cipher.encrypt(data_string.encode())
 # print(encrypted_message)
-encrypted_message = str(encrypted_message)
-encrypted_message = encrypted_message[2:-1]
-print(encrypted_message)
-print(sys.getsizeof(encrypted_message))
-#encrypted_message = encrypted_message.encode()
-#decrypted = rsa.decrypt(encrypted_message, private_key).decode()
+# print(sys.getsizeof(encrypted_message))
 
-myobj = {'secretkey': encrypted_message}
+# # encrypted_message = rsa.encrypt(data_string.encode(), public_key)
+# # print(encrypted_message)
+# encrypted_message = str(encrypted_message)
+# encrypted_message = encrypted_message[2:-1]
+# print(encrypted_message)
+# print(sys.getsizeof(encrypted_message))
+# #encrypted_message = encrypted_message.encode()
+# #decrypted = rsa.decrypt(encrypted_message, private_key).decode()
 
-x = requests.post("http://127.0.0.1:5000/entrance", json = myobj)
+# myobj = {'secretkey': encrypted_message}
+# myobj = {'username': 'user2',
+#          'password': '11111111',
+#          'idnp': '0458945612395',
+#          'name_surname': 'Iana L',
+#          'clasa': '10',
+#          'liceu': 'P. Rares',
+#          'parinte': 'Eugeniu Popa'         
+#          }
+# myobj = {'username': 'user2',
+#          'password': '11111111',
+#          'idnp': '0124579652145',
+#          'name_surname': 'Eugeniu Popa',
+#          'liceu': 'P. Rares',        
+#          }
+
+myobj = {'username': 'user2',
+         'password': '11111111',        
+         }
+
+x = requests.post("http://127.0.0.1:5000/login", json = myobj)
+print(x.text)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8001)
