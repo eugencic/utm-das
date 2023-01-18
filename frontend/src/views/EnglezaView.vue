@@ -12,7 +12,7 @@ export default {
     name: 'engleza',
     data: () => ({
         timer: null,
-        result: "Limba Engleza"
+        result: "Limba Engleza - Prezenta"
     }),
     // methods: {
     //     getMessage() {

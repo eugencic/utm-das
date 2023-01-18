@@ -7,7 +7,6 @@ import numpy as np
 # 200 succesfull
 # 404 not found
 
-
 def engleza(nume_prenume, data):
 
     db = newConnect()
@@ -92,7 +91,6 @@ def informatica(nume_prenume, data):
 
     return ans
 
-
 def prezenta_liceu(nume_prenume, data):
     db = newConnect()
     cur = db.cursor()
@@ -113,7 +111,6 @@ def prezenta_liceu(nume_prenume, data):
 
     return ans
 
-
 def prezentaGenerala(nume_prenume, data):
     ans = []
     ans.append(prezenta_liceu(nume_prenume, data))
@@ -127,7 +124,6 @@ def prezentaGenerala(nume_prenume, data):
     ans.append(informatica(nume_prenume, data))
     ans[4].append("Inforamtica")
     return ans
-
 
 def prezenta_liceuAll(nume_prenume):
     db = newConnect()
@@ -149,7 +145,6 @@ def prezenta_liceuAll(nume_prenume):
         db.close()
 
     return ans
-
 
 def romanaAll(nume_prenume):
     db = newConnect()
@@ -173,7 +168,6 @@ def romanaAll(nume_prenume):
 
     return ans
 
-
 def englezaAll(nume_prenume):
     db = newConnect()
     cur = db.cursor()
@@ -196,7 +190,6 @@ def englezaAll(nume_prenume):
 
     return ans
 
-
 def matematicaAll(nume_prenume):
     db = newConnect()
     cur = db.cursor()
@@ -217,7 +210,6 @@ def matematicaAll(nume_prenume):
         db.close()
 
     return ans
-
 
 def informaticaAll(nume_prenume):
     db = newConnect()
@@ -240,7 +232,6 @@ def informaticaAll(nume_prenume):
 
     return ans
 
-
 def prezentaSemestru(nume_prenume):
     ans = []
     ans.append(prezenta_liceuAll(nume_prenume))
@@ -252,9 +243,8 @@ def prezentaSemestru(nume_prenume):
     ans.append(matematicaAll(nume_prenume))
     ans[3].append("Matematica")
     ans.append(informaticaAll(nume_prenume))
-    ans[4].append("Inforamtica")
+    ans[4].append("Informatica")
     return ans
-
 
 def tuptolistConvert(tup):
     result = []
@@ -262,3 +252,21 @@ def tuptolistConvert(tup):
         for x in t:
             result.append(x)
     return result
+
+def presenceObiect(tabel):
+    db = newConnect()
+    cur = db.cursor()
+    ans = []
+    try:
+        cur.execute("Select * from sql7588695." + str(tabel) + ";")
+        pres = cur.fetchall()
+        arr = list(pres)
+        ans = [list(ele) for ele in arr]
+    except:
+        pres = cur.fetchall()
+        print("Error")
+    finally:
+        cur.close()
+        db.close()
+
+    return ans

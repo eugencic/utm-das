@@ -12,7 +12,7 @@ export default {
     name: 'informatica',
     data: () => ({
         timer: null,
-        result: "Informatica"
+        result: "Informatica - Prezenta"
     }),
     // methods: {
     //     getMessage() {

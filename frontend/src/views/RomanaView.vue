@@ -12,7 +12,7 @@ export default {
     name: 'entrance',
     data: () => ({
         timer: null,
-        result: "Romana"
+        result: "Romana - Prezenta"
     }),
     // methods: {
     //     getMessage() {

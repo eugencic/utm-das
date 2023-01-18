@@ -16,7 +16,6 @@ from datetime import date
 import sys
 import codecs
 
-
 from DBfiles.DBElevi import *
 from DBfiles.DBParinti import *
 from DBfiles.DBProfi import *
@@ -26,10 +25,8 @@ from DBfiles.LoghIN import *
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-
 CORS(app, resources={r"/*":{'origins':"*"}})
 CORS(app, resources={r'/*':{'origins': 'http://localhost:8080', "allow_headers": "Access-Control-Allow-Origin"}})
-
 
 threads = []
 path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
@@ -43,7 +40,6 @@ today = today[5:]
 today = today.replace("-", ".")
 print(today)
 
-
 db = mysql.connector.connect(host = 'sql7.freemysqlhosting.net', database = 'sql7588695', user = "sql7588695", passwd = "u3icbbgMbM")
 
 if (db):
@@ -53,7 +49,6 @@ else:
     
 mycursor = db.cursor()
 
-
 # with open('backend/keys/publicKey.pem', 'rb') as p:
 #     public_key = rsa.PublicKey.load_pkcs1(p.read())
 # with open('backend/keys/privateKey.pem', 'rb') as p:
@@ -61,21 +56,18 @@ mycursor = db.cursor()
 # with open('backend/keys/publicKey.pem', 'rb') as p:
 #     original_public_key = str(p.read())
 
+# key_pair = RSA.generate(2048)
 
-key_pair = RSA.generate(2048)
+# public_key = key_pair.publickey().exportKey()
+# private_key = key_pair.exportKey()
 
-public_key = key_pair.publickey().exportKey()
-private_key = key_pair.exportKey()
-
-print(public_key)
-print(type(public_key))
-print(private_key)
-    
-    
-@app.route('/publickey', methods=['GET'])
-def publicKey():
-    return(public_key)
-
+# print(public_key)
+# print(type(public_key))
+# print(private_key)
+     
+# @app.route('/publickey', methods=['GET'])
+# def publicKey():
+#     return(public_key)
 
 entrance_qr_string = ''
 engleza_qr_string = ''
@@ -87,7 +79,6 @@ romana_qr_string = ''
 def sendEntranceString():
     return(entrance_qr_string)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     data = request.get_json()
@@ -97,7 +88,6 @@ def login():
     }
     user_data = signIn(user['username'], user['password'])
     return(str(user_data))
-
 
 @app.route('/signupelev', methods=['GET', 'POST'])
 def signupelev():
@@ -115,7 +105,6 @@ def signupelev():
     newelev(new_elev['idnp'], new_elev['name_surname'], new_elev['clasa'], new_elev['liceu'], new_elev['parinte'], new_elev['username'])
     return('User created')
 
-
 @app.route('/signupparinte', methods=['GET', 'POST'])
 def signupparinte():
     data = request.get_json()
@@ -124,12 +113,12 @@ def signupparinte():
         'password': data['password'],
         'idnp': data['idnp'],
         'name_surname': data['name_surname'],
-        'liceu': data['liceu']
+        'liceu': data['liceu'],
+        'posta': data['posta']
     }
     newuserparinte(new_parinte['username'], new_parinte['password'])
-    newparinte(new_parinte['idnp'], new_parinte['name_surname'], new_parinte['liceu'], new_parinte['username'])
+    newparinte(new_parinte['idnp'], new_parinte['name_surname'], new_parinte['liceu'], new_parinte['username'], new_parinte['posta'])
     return('User created')
-
 
 @app.route('/signupprof', methods=['GET', 'POST'])
 def signuprof():
@@ -144,7 +133,6 @@ def signuprof():
     newprof(new_prof['name_surname'], new_prof['obiect'], new_prof['username'])
     return('User created')
 
-
 @app.route('/addchildsparinte', methods=['GET', 'POST'])
 def addChildsParinte():
     data = request.get_json()
@@ -154,7 +142,6 @@ def addChildsParinte():
     }
     addChilds(new_parinte['name_surname_copil'], new_parinte['name_surname_parinte'])
     return('Child added')
-
 
 @app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
@@ -171,42 +158,35 @@ def entrance():
     print(decrypted)
     return {'success': True}
     
-
 def delete_old_entrance_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/entrance/empty_qrcode.png')
         im.save(path)
-        
-        
+              
 def delete_old_engleza_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/engleza/empty_qrcode.png')
         im.save(path)
-        
-        
+              
 def delete_old_informatica_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/informatica/empty_qrcode.png')
         im.save(path)
 
-
 def delete_old_matematica_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/matematica/empty_qrcode.png')
         im.save(path)
-        
-        
+              
 def delete_old_romana_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/romana/empty_qrcode.png')
         im.save(path)
 
-
 def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
-
 
 s = sched.scheduler(time.time, time.sleep)
 
@@ -259,10 +239,8 @@ def generate_entrance_qr(sc):
 
 s.enter(1, 1, generate_entrance_qr, (s,))
 
-
 def run_entrance_qr_generator():
     s.run()
-
 
 def run_school():
     school_thread = Thread(target = lambda: app.run(host = '0.0.0.0', port = 5000, debug = True, use_reloader = False), daemon = True)
@@ -275,7 +253,6 @@ def run_school():
         thread.start()
     for thread in threads:
         thread.join()
-
 
 if __name__ == "__main__":
     run_school()

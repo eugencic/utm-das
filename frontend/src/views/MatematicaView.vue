@@ -12,7 +12,7 @@ export default {
     name: 'entrance',
     data: () => ({
         timer: null,
-        result: "Matematica"
+        result: "Matematica - Prezenta"
     }),
     // methods: {
     //     getMessage() {

@@ -2,10 +2,11 @@ from DBfiles.DbConnector import *
 from mysql.connector import Error
 import hashlib
 
+
 # parametrii name_surname pentru numele si prenumele parintelui like "john Week"
 #            liceul pentru liceul unde invata copii sai :D
 #            username - username-ul dupa logare
-def newparinte(idnp, name_surname , liceu, username):
+def newparinte(idnp, name_surname , liceu, username, posta):
     db = newConnect()
     cur = db.cursor()
     try:
@@ -14,8 +15,8 @@ def newparinte(idnp, name_surname , liceu, username):
         cur.execute("SELECT id_liceu FROM sql7588695.licee WHERE (`denumire` = '" + liceu + "')")
         id_liceu = cur.fetchall()
 
-        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_parinte`,`idnp`,`nume_prenume`, `id_liceu`) "
-                "VALUES ('"+ str(id_prof[0][0]) + "', '" + idnp + "', '" + name_surname + "', '" + str(id_liceu[0][0]) +"');")
+        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_parinte`,`idnp`,`nume_prenume`, `id_liceu`, `posta`) "
+                "VALUES ('"+ str(id_prof[0][0]) + "', '" + idnp + "', '" + name_surname + "', '" + str(id_liceu[0][0]) + "', '" + str(posta) +"');")
 
         cur.execute("SELECT * FROM sql7588695.parinti")
 
@@ -65,7 +66,7 @@ def deleteparinte(name):
 
 # parametrii username pentru username
 #            passwd pentru parola
-def newuserparinte(username, passwd):
+def newuserparinte(username , passwd):
     db = newConnect()
     cur = db.cursor()
     hash_passwd = hashlib.sha256(passwd.encode('utf-8')).hexdigest()
@@ -96,13 +97,15 @@ def addChilds(copil, name):
     try:
         cur.execute("SELECT id_elev FROM sql7588695.elevi WHERE (`nume_prenume` = '" + copil + "')")
         id_copil = cur.fetchall()
-        cur.execute("SELECT id_copii FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
-        parinte_copii_id = cur.fetchall()[0][0]
-        if parinte_copii_id == "None" :
+        cur.execute("SELECT id_copii,id_parinte FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        temp = list(cur.fetchall()[0])
+        parinte_copii_id = str(temp[0])
+        parinte_id = str(temp[1])
+
+        if parinte_copii_id == "None":
             parinte_copii_id = ''
 
-        cur.execute("INSERT INTO `sql7588695`.`parinti` (`id_copii`) "
-                "VALUES ('"+ parinte_copii_id + "," + str(id_copil[0][0]) + "');")
+        cur.execute("UPDATE `sql7588695`.`parinti` SET `id_copii` =  ('"+ parinte_copii_id + "," + str(id_copil[0][0]) + "') WHERE (`id_parinte` = '" + parinte_id +"');")
 
         cur.execute("SELECT * FROM sql7588695.parinti")
 
@@ -114,6 +117,51 @@ def addChilds(copil, name):
 
         for i in range(30):
             print('#', end = '#')
+        print()
+
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally:
+        cur.close()
+        db.close()
+
+def allChilds(name):
+    db = newConnect()
+    cur = db.cursor()
+    try:
+        cur.execute("SELECT id_copii FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        parinte_copii_id = cur.fetchall()[0][0]
+        db.commit()
+    except Error as error:
+        print(error)
+
+    finally:
+        cur.close()
+        db.close()
+
+    ans = parinte_copii_id.split(",")
+    return ans
+
+def changeemail(new_post, name):
+    db = newConnect()
+    cur = db.cursor()
+    try:
+        cur.execute("SELECT id_parinte FROM sql7588695.parinti WHERE (`nume_prenume` = '" + name + "')")
+        parinte_id = cur.fetchall()[0][0]
+        cur.execute("UPDATE `sql7588695`.`parinti` SET `posta` =  '"+ new_post +"' WHERE `id_parinte` = '" + str(parinte_id) +"';")
+
+        cur.execute("SELECT * FROM sql7588695.parinti")
+
+        # print all the first cell of all the rows
+        for row in cur.fetchall():
+            for i in range(len(row)):
+                print(row[i], end='   |   ')
+            print()
+
+        for i in range(30):
+            print('#', end='#')
         print()
 
         db.commit()
