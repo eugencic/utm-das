@@ -9,9 +9,13 @@ def newdata(tabel , data_curr):
     cur = db.cursor()
 
     cur.execute("ALTER TABLE `sql7588695`.`" + tabel + "` "
-                "ADD COLUMN `" + str(data_curr) + "` VARCHAR(1) NULL ;")
+                "ADD COLUMN `" + str(data_curr) + "` VARCHAR(1) DEFAULT 'a' ;")
+
+    # cur.execute("INSERT INTO `sql7588695`.`" + tabel + "` (" + data_curr + ")"
+    #             "VALUES ('a') ;")
 
     cur.execute("SELECT * FROM sql7588695." + tabel)
+
 
     # print all the first cell of all the rows
     for row in cur.fetchall():
@@ -22,6 +26,7 @@ def newdata(tabel , data_curr):
         print('#', end = '#')
     print()
 
+    db.commit()
     db.close()
 
 def deletedata(tabel , data_to_delete):

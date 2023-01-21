@@ -9,6 +9,7 @@ import LoghIN
 import DBLicee
 import Presence
 import SendingEmail
+import AddPresence
 
 def main():
     db = DbConnector.newConnect()
@@ -60,12 +61,23 @@ if __name__=="__main__":
 #     print (LoghIN.signIn("laur2","laur1"))
 #     print(LoghIN.signIn("laur","laur"))
 
-# prezenta
-#     print(Presence.prezentaGenerala("Coseru Catalin","01.09"))
-#     print(Presence.prezentaSemestru("Coseru Catalin"))
+# # prezenta
+#     print(Presence.prezentaGenerala("123456789105","01.09"))
+#     print(Presence.prezentaSemestru("123456789105"))
 #     print(Presence.presenceObiect("engleza"))
 
-#sending emails
+# sending emails
     # SendingEmail.sendEmail("First Try","kat.ko.sk.23@gmail.com")
-    # SendingEmail.sendParinti("Eugen Nistru")
+    SendingEmail.sendParinti("Eugen Nistru")
     # SendingEmail.sendProfesori("Austenie Ceausescu", "kat.ko.sk.23@gmail.com")
+    SendingEmail.sendDayParinti("Eugen Nistru", "01.09")
+
+# add presence
+##### prezenta se adauga prin indicarea tabelului, idnp-ului, si a datei
+#     print(Presence.presenceObiect("romana"))
+#     AddPresence.prezent('romana', "123456789105", '01.09')
+#     print(Presence.presenceObiect("romana"))
+#     AddPresence.absent('romana', "123456789105", '01.09')
+#     print(Presence.presenceObiect("romana"))
+#     AddPresence.exitSchool("123456789105", '01.09')
+
