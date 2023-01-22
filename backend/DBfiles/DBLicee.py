@@ -1,4 +1,4 @@
-from DbConnector import newConnect
+from DBfiles.DbConnector import newConnect
 
 
 # parametrii name pentru denumiea liceului si adresa - adress

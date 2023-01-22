@@ -1,5 +1,4 @@
-from flask import Flask, request
-from flask_cors import CORS
+from flask import Flask, request, jsonify
 from threading import Thread
 from PIL import Image
 import sched
@@ -10,11 +9,7 @@ import random
 import qrcode
 import mysql.connector
 import rsa
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
 from datetime import date
-import sys
-import codecs
 
 from DBfiles.DBElevi import *
 from DBfiles.DBParinti import *
@@ -25,9 +20,6 @@ from DBfiles.LoghIN import *
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-CORS(app, resources={r"/*":{'origins':"*"}})
-CORS(app, resources={r'/*':{'origins': 'http://localhost:8080', "allow_headers": "Access-Control-Allow-Origin"}})
-
 threads = []
 path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
 path_engleza = 'frontend/src/assets/qrcodes/engleza/qrcode.png'
@@ -37,47 +29,43 @@ path_romana = 'frontend/src/assets/qrcodes/romana/qrcode.png'
 
 today = str(date.today())
 today = today[5:]
-today = today.replace("-", ".")
-print(today)
+today = today.split('-')
+temp_str = today[0]
+today[0] = today[1]
+temp_today = str(today[0])
+temp_today = temp_today + '.'
+temp_today = temp_today + str(today[1])
+today = temp_today
+print('Today is: ' + today)
 
 db = mysql.connector.connect(host = 'sql7.freemysqlhosting.net', database = 'sql7588695', user = "sql7588695", passwd = "u3icbbgMbM")
 
 if (db):
-    print('Connection successful')
+    print('Connection to the database is successful')
 else:
-    print('Connection unsuccessful')
-    
-mycursor = db.cursor()
+    print('Connection to the database is unsuccessful')
 
-# with open('backend/keys/publicKey.pem', 'rb') as p:
-#     public_key = rsa.PublicKey.load_pkcs1(p.read())
-# with open('backend/keys/privateKey.pem', 'rb') as p:
-#     private_key = rsa.PrivateKey.load_pkcs1(p.read())
-# with open('backend/keys/publicKey.pem', 'rb') as p:
-#     original_public_key = str(p.read())
+public_key, private_key = rsa.newkeys(2048)
+tempstr = str(public_key).split('(')
+tempstr = tempstr[1].split(')')
+tempstr = tempstr[0].split(', ')
+public_key_string_n = tempstr[0]
+public_key_string_e = tempstr[1]
+public_key_arr = tempstr
+temp_pk = rsa.PublicKey(int(tempstr[0]), int(tempstr[1]))
+tempstr = str(private_key).split('(')
+tempstr = tempstr[1].split(')')
+tempstr = tempstr[0].split(', ')
+private_key_arr = tempstr
+temp_pk = rsa.PublicKey(int(public_key_arr[0]), int(public_key_arr[1]))
+temp_pr = rsa.PrivateKey(int(private_key_arr[0]), int(private_key_arr[1]), int(private_key_arr[2]), int(private_key_arr[3]), int(private_key_arr[4]))
 
-# key_pair = RSA.generate(2048)
-
-# public_key = key_pair.publickey().exportKey()
-# private_key = key_pair.exportKey()
-
-# print(public_key)
-# print(type(public_key))
-# print(private_key)
-     
-# @app.route('/publickey', methods=['GET'])
-# def publicKey():
-#     return(public_key)
-
-entrance_qr_string = ''
-engleza_qr_string = ''
-informatica_qr_string = ''
-matematica_qr_string = ''
-romana_qr_string = ''
-
-@app.route('/sendentrancestring', methods=['GET'])
-def sendEntranceString():
-    return(entrance_qr_string)
+@app.route('/publickey', methods=['GET'])
+def publicKey():
+    return jsonify(
+        public_n = public_key_string_n,
+        public_e = public_key_string_e
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -143,21 +131,44 @@ def addChildsParinte():
     addChilds(new_parinte['name_surname_copil'], new_parinte['name_surname_parinte'])
     return('Child added')
 
+entrance_qr_string = ''
+engleza_qr_string = ''
+informatica_qr_string = ''
+matematica_qr_string = ''
+romana_qr_string = ''
+
+@app.route('/sendentrancestring', methods=['GET'])
+def sendEntranceString():
+    return(entrance_qr_string)
+
+@app.route('/sendenglezastring', methods=['GET'])
+def sendEnglezaString():
+    return(engleza_qr_string)
+
+@app.route('/sendinformaticastring', methods=['GET'])
+def sendInformaticaString():
+    return(informatica_qr_string)
+
+@app.route('/sendmatematicastring', methods=['GET'])
+def sendMatematicaString():
+    return(matematica_qr_string)
+
+@app.route('/sendromanastring', methods=['GET'])
+def sendRomanaString():
+    return(romana_qr_string)
+
 @app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
     data = request.get_json()
     print(data['secretkey'])
     data_string = str(data['secretkey'])
-    data_string = data_string.encode()
-    print(sys.getsizeof(data_string))
-    print(data_string)
-    global private_key
-    pr_key = RSA.importKey(private_key)
-    cipher = PKCS1_OAEP.new(pr_key)
-    decrypted = cipher.decrypt(data_string)
-    print(decrypted)
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    print("Decripted is : " , decrypted)
     return {'success': True}
-    
+
 def delete_old_entrance_qr():
     if os.path.exists(path):
         im = Image.open('frontend/src/assets/qrcodes/entrance/empty_qrcode.png')
@@ -190,7 +201,7 @@ def get_random_string(length):
 
 s = sched.scheduler(time.time, time.sleep)
 
-def generate_entrance_qr(sc):
+def generate_qr(sc):
     global entrance_qr_string
     place = "entrance"
     time = today
@@ -235,11 +246,11 @@ def generate_entrance_qr(sc):
     romana_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_romana)
-    sc.enter(15, 1, generate_entrance_qr, (sc,))
+    sc.enter(15, 1, generate_qr, (sc,))
 
-s.enter(1, 1, generate_entrance_qr, (s,))
+s.enter(1, 1, generate_qr, (s,))
 
-def run_entrance_qr_generator():
+def run_qr_generator():
     s.run()
 
 def run_school():
@@ -247,7 +258,7 @@ def run_school():
     threads.append(school_thread)
     qr_delete_thread = Thread(target = delete_old_entrance_qr)
     threads.append(qr_delete_thread)
-    qr_thread = Thread(target = run_entrance_qr_generator)
+    qr_thread = Thread(target = run_qr_generator)
     threads.append(qr_thread)
     for thread in threads:
         thread.start()

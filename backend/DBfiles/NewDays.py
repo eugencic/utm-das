@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import mysql.connector
-from DbConnector import newConnect
-
+from DBfiles.DbConnector import newConnect
 
 # parametrii tabel pentru denumiea tabelului si data_curenta in format 01.01 day.moth
 def newdata(tabel , data_curr):
@@ -9,7 +8,10 @@ def newdata(tabel , data_curr):
     cur = db.cursor()
 
     cur.execute("ALTER TABLE `sql7588695`.`" + tabel + "` "
-                "ADD COLUMN `" + str(data_curr) + "` VARCHAR(1) NULL ;")
+                "ADD COLUMN `" + str(data_curr) + "` VARCHAR(1) DEFAULT 'a' ;")
+
+    # cur.execute("INSERT INTO `sql7588695`.`" + tabel + "` (" + data_curr + ")"
+    #             "VALUES ('a') ;")
 
     cur.execute("SELECT * FROM sql7588695." + tabel)
 
@@ -22,6 +24,7 @@ def newdata(tabel , data_curr):
         print('#', end = '#')
     print()
 
+    db.commit()
     db.close()
 
 def deletedata(tabel , data_to_delete):
