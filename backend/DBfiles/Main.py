@@ -68,9 +68,9 @@ if __name__=="__main__":
 
 # sending emails
     # SendingEmail.sendEmail("First Try","kat.ko.sk.23@gmail.com")
-    SendingEmail.sendParinti("Eugen Nistru")
+    # SendingEmail.sendParinti("Eugen Nistru")
     # SendingEmail.sendProfesori("Austenie Ceausescu", "kat.ko.sk.23@gmail.com")
-    SendingEmail.sendDayParinti("Eugen Nistru", "01.09")
+    # SendingEmail.sendDayParinti("Eugen Nistru", "01.09")
 
 # add presence
 ##### prezenta se adauga prin indicarea tabelului, idnp-ului, si a datei
@@ -80,4 +80,5 @@ if __name__=="__main__":
 #     AddPresence.absent('romana', "123456789105", '01.09')
 #     print(Presence.presenceObiect("romana"))
 #     AddPresence.exitSchool("123456789105", '01.09')
+    AddPresence.prezent_liceu("123456789105", '01.09')
 
