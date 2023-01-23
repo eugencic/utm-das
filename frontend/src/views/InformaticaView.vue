@@ -1,7 +1,7 @@
 <template>
     <div>
         <p>{{ result }}</p>
-        <img src = "../assets/qrcodes/entrance/qrcode.png"/>
+        <img src = "../assets/qrcodes/informatica/qrcode.png"/>
     </div>
 </template>
 
@@ -9,10 +9,10 @@
 import axios from 'axios'
 
 export default {
-    name: 'entrance',
+    name: 'informatica',
     data: () => ({
         timer: null,
-        result: "Scan the QR Code when you enter and leave the school"
+        result: "Informatica - Prezenta"
     }),
     // methods: {
     //     getMessage() {

@@ -1,7 +1,7 @@
 <template>
     <div>
         <p>{{ result }}</p>
-        <img src = "../assets/qrcodes/entrance/qrcode.png"/>
+        <img src = "../assets/qrcodes/romana/qrcode.png"/>
     </div>
 </template>
 
@@ -12,7 +12,7 @@ export default {
     name: 'entrance',
     data: () => ({
         timer: null,
-        result: "Scan the QR Code when you enter and leave the school"
+        result: "Romana - Prezenta"
     }),
     // methods: {
     //     getMessage() {
