@@ -14,8 +14,13 @@ from datetime import date
 from DBfiles.DBElevi import *
 from DBfiles.DBParinti import *
 from DBfiles.DBProfi import *
+from DBfiles.NewDays import *
+from DBfiles.DbConnector import *
 from DBfiles.LoghIN import *
-
+from DBfiles.DBLicee import *
+from DBfiles.Presence import *
+from DBfiles.SendingEmail import *
+from DBfiles.AddPresence import *
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -30,12 +35,9 @@ path_romana = 'frontend/src/assets/qrcodes/romana/qrcode.png'
 today = str(date.today())
 today = today[5:]
 today = today.split('-')
-temp_str = today[0]
-today[0] = today[1]
-temp_today = str(today[0])
-temp_today = temp_today + '.'
-temp_today = temp_today + str(today[1])
-today = temp_today
+month = str(today[0])
+day = str(today[1])
+today = day + "." + month
 print('Today is: ' + today)
 
 db = mysql.connector.connect(host = 'sql7.freemysqlhosting.net', database = 'sql7588695', user = "sql7588695", passwd = "u3icbbgMbM")
@@ -126,7 +128,7 @@ def addChildsParinte():
     data = request.get_json()
     new_parinte = {
         'name_surname_copil': data['name_surname_copil'],
-        'name__surname_parinte': data['name_surname_parinte'],
+        'name_surname_parinte': data['name_surname_parinte'],
     }
     addChilds(new_parinte['name_surname_copil'], new_parinte['name_surname_parinte'])
     return('Child added')
@@ -160,14 +162,117 @@ def sendRomanaString():
 @app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
     data = request.get_json()
-    print(data['secretkey'])
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
     global temp_pk
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
-    print("Decripted is : " , decrypted)
-    return {'success': True}
+    decrypted = decrypted.split("/")
+    tempstr = decrypted[0] + "/"
+    tempstr = tempstr + decrypted[1] + "/"
+    tempstr = tempstr + decrypted[2] + "/"
+    global entrance_qr_string
+    if tempstr == entrance_qr_string:
+        idnp = str(decrypted[3])
+        global today
+        prezent_liceu(idnp, today)
+        print("Presence is set")
+        return("Presence is set. Have a nice school day!")
+    else:
+        print("Something went wrong.")
+        return('Something went wrong')
+
+@app.route('/engleza', methods=['GET', 'POST'])
+def engleza():
+    data = request.get_json()
+    data_string = str(data['secretkey'])
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    decrypted = decrypted.split("/")
+    tempstr = decrypted[0] + "/"
+    tempstr = tempstr + decrypted[1] + "/"
+    tempstr = tempstr + decrypted[2] + "/"
+    global engleza_qr_string
+    if tempstr == engleza_qr_string:
+        idnp = str(decrypted[3])
+        global today
+        prezent("engleza", idnp, today)
+        print("Presence is set")
+        return("Presence is set. Have a nice lesson!")
+    else:
+        print("Something went wrong.")
+        return('Something went wrong')
+    
+@app.route('/informatica', methods=['GET', 'POST'])
+def informatica():
+    data = request.get_json()
+    data_string = str(data['secretkey'])
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    decrypted = decrypted.split("/")
+    tempstr = decrypted[0] + "/"
+    tempstr = tempstr + decrypted[1] + "/"
+    tempstr = tempstr + decrypted[2] + "/"
+    global informatica_qr_string
+    if tempstr == informatica_qr_string:
+        idnp = str(decrypted[3])
+        global today
+        prezent("informatica", idnp, today)
+        print("Presence is set")
+        return("Presence is set. Have a nice lesson!")
+    else:
+        print("Something went wrong.")
+        return('Something went wrong')
+    
+@app.route('/matematica', methods=['GET', 'POST'])
+def matematica():
+    data = request.get_json()
+    data_string = str(data['secretkey'])
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    decrypted = decrypted.split("/")
+    tempstr = decrypted[0] + "/"
+    tempstr = tempstr + decrypted[1] + "/"
+    tempstr = tempstr + decrypted[2] + "/"
+    global matematica_qr_string
+    if tempstr == matematica_qr_string:
+        idnp = str(decrypted[3])
+        global today
+        prezent("matematica", idnp, today)
+        print("Presence is set")
+        return("Presence is set. Have a nice lesson!")
+    else:
+        print("Something went wrong.")
+        return('Something went wrong')
+    
+@app.route('/romana', methods=['GET', 'POST'])
+def romana():
+    data = request.get_json()
+    data_string = str(data['secretkey'])
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    decrypted = decrypted.split("/")
+    tempstr = decrypted[0] + "/"
+    tempstr = tempstr + decrypted[1] + "/"
+    tempstr = tempstr + decrypted[2] + "/"
+    global romana_qr_string
+    if tempstr == romana_qr_string:
+        idnp = str(decrypted[3])
+        global today
+        prezent("romana", idnp, today)
+        print("Presence is set")
+        return("Presence is set. Have a nice lesson!")
+    else:
+        print("Something went wrong.")
+        return('Something went wrong')
 
 def delete_old_entrance_qr():
     if os.path.exists(path):
@@ -206,7 +311,7 @@ def generate_qr(sc):
     place = "entrance"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string
+    qr_string = place + "/" + time + "/" + rand_string + "/"
     entrance_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path)
@@ -215,7 +320,7 @@ def generate_qr(sc):
     place = "engleza"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string
+    qr_string = place + "/" + time + "/" + rand_string + "/"
     engleza_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_engleza)
@@ -224,7 +329,7 @@ def generate_qr(sc):
     place = "informatica"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string
+    qr_string = place + "/" + time + "/" + rand_string + "/"
     informatica_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_informatica)
@@ -233,7 +338,7 @@ def generate_qr(sc):
     place = "matematica"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string
+    qr_string = place + "/" + time + "/" + rand_string + "/"
     matematica_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_matematica)
@@ -242,7 +347,7 @@ def generate_qr(sc):
     place = "romana"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string
+    qr_string = place + "/" + time + "/" + rand_string + "/"
     romana_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_romana)

@@ -19,9 +19,9 @@ qr_message = requests.get("http://127.0.0.1:5000/sendentrancestring")
 qr_message = str(qr_message.text)
 print(qr_message)
 
-test_idnp = str("0123456789")
+test_idnp = str("856947823659")
 
-data_string = qr_message + '/' + test_idnp
+data_string = qr_message + test_idnp
 
 encrypted_message = rsa.encrypt(data_string.encode(), p_key)
 print(encrypted_message)

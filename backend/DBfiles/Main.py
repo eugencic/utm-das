@@ -29,7 +29,7 @@ def main():
 if __name__=="__main__":
     main()
 # adaugarea lunilor in registru
-    # NewDays.newdata("romana", "03.09")
+    # newdata("prezenta_liceu", "23.01")
     # NewDays.deletedata("romana", "03.09")
 
 # adaugarea/stergerea liceelor
@@ -67,9 +67,9 @@ if __name__=="__main__":
 
 # sending emails
     # SendingEmail.sendEmail("First Try","kat.ko.sk.23@gmail.com")
-    sendParinti("Eugen Nistru")
+    # sendParinti("Eugen Nistru")
     # SendingEmail.sendProfesori("Austenie Ceausescu", "kat.ko.sk.23@gmail.com")
-    sendDayParinti("Eugen Nistru", "01.09")
+    # sendDayParinti("Eugen Nistru", "01.09")
 
 # add presence
 #     prezenta se adauga prin indicarea tabelului, idnp-ului, si a datei

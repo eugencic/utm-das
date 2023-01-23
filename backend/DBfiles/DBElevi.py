@@ -105,6 +105,9 @@ def insertTables(id_elev, nume_prenume, db):
         cur.execute("INSERT INTO `sql7588695`.`romana` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
         cur.execute("INSERT INTO `sql7588695`.`engleza` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
         cur.execute("INSERT INTO `sql7588695`.`informatica` (`id_elev`, `nume_prenume`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + " ');")
+        cur.execute("select id_liceu from sql7588695.elevi WHERE (`id_elev` = '" + str(id_elev) + "');")
+        id_liceu= cur.fetchall()[0][0]
+        cur.execute("INSERT INTO `sql7588695`.`prezenta_liceu` (`id_elev`, `nume_prenume`, `id_liceu`) VALUES ('"+ id_elev + "', '" + str(nume_prenume) + "', '" + str(id_liceu) + " ');")
 
         db.commit()
     except Error as error:
@@ -120,6 +123,9 @@ def deleteTables(id_elev, db):
         cur.execute("DELETE FROM `sql7588695`.`romana` WHERE (`id_elev` = '" + id_elev + "');")
         cur.execute("DELETE FROM `sql7588695`.`engleza` WHERE (`id_elev` = '" + id_elev + "');")
         cur.execute("DELETE FROM `sql7588695`.`informatica` WHERE (`id_elev` = '" + id_elev + "');")
+        cur.execute("select id_liceu from sql7588695.elevi WHERE (`id_elev` = '" + str(id_elev) + "');")
+        id_liceu = cur.fetchall()[0][0]
+        cur.execute("DELETE FROM `sql7588695`.`prezenta_liceu` WHERE (`id_elev` = '" + id_elev + "');")
 
         db.commit()
     except Error as error:

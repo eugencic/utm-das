@@ -22,13 +22,19 @@ def signIn(username, passwd):
                     "select * from sql7588695.user_profesor) as users " +
                     "where ( username = '" + username + "')")
         user = cur.fetchall()[0]
+        # print(user)
+        if(user[2] == 'elev'):
+            cur.execute("select idnp from sql7588695.elevi WHERE (`id_elev` = '" + str(user[1]) + "');")
+        idnp_user = cur.fetchall()[0][0]
+        # print(idnp_user)
         if (user[0] == "None"):
             ans = [0, "", 404]
         elif (user[0] == hash_passwd):
-            ans = [user[1], user[2], 200]
+            ans = [idnp_user, user[2], 200]
         else:
-            ans = [user[1], user[2], 401]
-    except:
+            ans = [idnp_user, user[2], 401]
+    except Error as error:
+        # print(error)
         user = cur.fetchall()
         if (user == []):
             ans = [0, "", 404]
