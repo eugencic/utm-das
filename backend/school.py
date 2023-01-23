@@ -26,11 +26,6 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 threads = []
-path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
-path_engleza = 'frontend/src/assets/qrcodes/engleza/qrcode.png'
-path_informatica = 'frontend/src/assets/qrcodes/informatica/qrcode.png'
-path_matematica = 'frontend/src/assets/qrcodes/matematica/qrcode.png'
-path_romana = 'frontend/src/assets/qrcodes/romana/qrcode.png'
 
 today = str(date.today())
 today = today[5:]
@@ -46,6 +41,12 @@ if (db):
     print('Connection to the database is successful')
 else:
     print('Connection to the database is unsuccessful')
+    
+path = 'frontend/src/assets/qrcodes/entrance/qrcode.png'
+path_engleza = 'frontend/src/assets/qrcodes/engleza/qrcode.png'
+path_informatica = 'frontend/src/assets/qrcodes/informatica/qrcode.png'
+path_matematica = 'frontend/src/assets/qrcodes/matematica/qrcode.png'
+path_romana = 'frontend/src/assets/qrcodes/romana/qrcode.png'
 
 public_key, private_key = rsa.newkeys(2048)
 tempstr = str(public_key).split('(')
@@ -67,7 +68,7 @@ def publicKey():
     return jsonify(
         public_n = public_key_string_n,
         public_e = public_key_string_e
-    )
+        )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -128,10 +129,89 @@ def addChildsParinte():
     data = request.get_json()
     new_parinte = {
         'name_surname_copil': data['name_surname_copil'],
-        'name_surname_parinte': data['name_surname_parinte'],
+        'name_surname_parinte': data['name_surname_parinte']
     }
     addChilds(new_parinte['name_surname_copil'], new_parinte['name_surname_parinte'])
     return('Child added')
+
+@app.route('/changeemailparinte', methods=['GET', 'POST'])
+def changeEmailParinte():
+    data = request.get_json()
+    email = {
+        'new_email': data['new_email'],
+        'name_surname_parinte': data['name_surname_parinte']
+    }
+    changeemail(email['new_email'], email['name_surname_parinte'])
+    return('Email changed')
+
+@app.route('/checkstudentpresence', methods=['GET', 'POST'])
+def changeStudentPresence():
+    data = request.get_json()
+    student_data = {
+        'tabel': data['tabel'],
+        'idnp': data['idnp'],
+        'data': data['data']
+    }
+    prezenta = checkElevPrezenta(student_data['tabel'], student_data['idnp'], student_data['data'])
+    return(str(prezenta))
+
+@app.route('/generalpresence', methods=['GET', 'POST'])
+def generalPresence():
+    data = request.get_json()
+    request_data = {
+        'idnp': data['idnp'],
+        'data': data['data']
+    }
+    prezenta_generala = prezentaGenerala(request_data['idnp'], request_data['data'])
+    return(str(prezenta_generala))
+
+@app.route('/checkallpresence', methods=['GET', 'POST'])
+def checkAllPresence():
+    data = request.get_json()
+    request_data = {
+        'tabel': data['tabel'],
+        'idnp': data['idnp']
+    }
+    all_presence = CheckPrezentaAll(request_data['tabel'], request_data['idnp'])
+    return(str(all_presence))
+
+@app.route('/semesterpresence', methods=['GET', 'POST'])
+def semesterPresence():
+    data = request.get_json()
+    request_data = {
+        'idnp': data['idnp']
+    }
+    semester_presence = prezentaSemestru(request_data['idnp'])
+    return(str(semester_presence))
+
+@app.route('/sendemailparinti', methods=['GET', 'POST'])
+def sendEmailParinti():
+    data = request.get_json()
+    parinte = {
+        'nume_prenume': data['nume_prenume']
+    }
+    sendParinti(parinte['nume_prenume'])
+    return('Email sent')
+
+@app.route('/sendemailparintiday', methods=['GET', 'POST'])
+def sendEmailParintiDay():
+    data = request.get_json()
+    parinte = {
+        'nume_prenume': data['nume_prenume'],
+        'data': data['data']
+    }
+    sendDayParinti(parinte['nume_prenume'], parinte['data'])
+    return('Email sent')
+
+@app.route('/sendteachers', methods=['GET', 'POST'])
+def sendTeachers():
+    data = request.get_json()
+    teacher = {
+        'nume_prenume': data['nume_prenume'],
+        'email': data['email']
+    }
+    sendProfesori(teacher['nume_prenume'], teacher['email'])
+    return('Email sent')
 
 entrance_qr_string = ''
 engleza_qr_string = ''

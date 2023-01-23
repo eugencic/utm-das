@@ -51,7 +51,7 @@ def prezentaGenerala(idnp, data):
     ans[4].append("Inforamtica")
     return ans
 
-def CheckPrezentaAll(tabel , idnp):
+def CheckPrezentaAll(tabel, idnp):
     db = newConnect()
     cur = db.cursor()
     ans = []

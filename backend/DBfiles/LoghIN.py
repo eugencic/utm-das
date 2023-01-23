@@ -15,7 +15,7 @@ def signIn(username, passwd):
     ans = []
     try:
         cur.execute("select passwd, id, rol from "  +
-                    "(select id_elev_user as id , username, passwd, rol from sql7588695.user_elevi " +
+                    "(select id_elev_user as id, username, passwd, rol from sql7588695.user_elevi " +
                     "union " +
                     "select * from sql7588695.user_parinte " +
                     "union " +
