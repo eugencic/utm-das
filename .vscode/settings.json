@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
+        "./backend",
         "./backend/DBfiles",
-        "./backend"
+        "./backend/Ciphers"
     ]
 }

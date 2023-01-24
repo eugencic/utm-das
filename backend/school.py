@@ -22,6 +22,7 @@ from DBfiles.DBLicee import *
 from DBfiles.Presence import *
 from DBfiles.SendingEmail import *
 from DBfiles.AddPresence import *
+from Ciphers.Stream import *
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -63,6 +64,14 @@ tempstr = tempstr[0].split(', ')
 private_key_arr = tempstr
 temp_pk = rsa.PublicKey(int(public_key_arr[0]), int(public_key_arr[1]))
 temp_pr = rsa.PrivateKey(int(private_key_arr[0]), int(private_key_arr[1]), int(private_key_arr[2]), int(private_key_arr[3]), int(private_key_arr[4]))
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
+streamCipher = Stream()
+stream_key = get_random_string(8)
 
 @app.route('/publickey', methods=['GET'])
 def publicKey():
@@ -242,6 +251,7 @@ def sendRomanaString():
 
 @app.route('/receiveqr', methods=['GET', 'POST'])
 def receiveqr():
+    global stream_key
     myobj = request.get_json()
     data_string = str(myobj['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -249,8 +259,10 @@ def receiveqr():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     route = str(decrypted[0])
-    print(route)
     if route == "entrance":
         x = requests.post("http://127.0.0.1:5000/entrance", json = myobj)
     elif route == "engleza":
@@ -265,6 +277,7 @@ def receiveqr():
 
 @app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
+    global stream_key
     data = request.get_json()
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -272,15 +285,17 @@ def entrance():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    idnp = str(decrypted[1])
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     tempstr = decrypted[0] + "/"
     tempstr = tempstr + decrypted[1] + "/"
-    tempstr = tempstr + decrypted[2] + "/"
+    tempstr = tempstr + decrypted[2]
     global entrance_qr_string
     if tempstr == entrance_qr_string:
-        idnp = str(decrypted[3])
         global today
         prezent_liceu(idnp, today)
-        print(idnp)
         print("Presence is set")
         return("Presence is set. Have a nice school day!")
     else:
@@ -289,6 +304,7 @@ def entrance():
 
 @app.route('/engleza', methods=['GET', 'POST'])
 def engleza():
+    global stream_key
     data = request.get_json()
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -296,12 +312,15 @@ def engleza():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    idnp = str(decrypted[1])
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     tempstr = decrypted[0] + "/"
     tempstr = tempstr + decrypted[1] + "/"
-    tempstr = tempstr + decrypted[2] + "/"
+    tempstr = tempstr + decrypted[2]
     global engleza_qr_string
     if tempstr == engleza_qr_string:
-        idnp = str(decrypted[3])
         global today
         prezent("engleza", idnp, today)
         print("Presence is set")
@@ -312,6 +331,7 @@ def engleza():
     
 @app.route('/informatica', methods=['GET', 'POST'])
 def informatica():
+    global stream_key
     data = request.get_json()
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -319,12 +339,14 @@ def informatica():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    idnp = str(decrypted[1])
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     tempstr = decrypted[0] + "/"
     tempstr = tempstr + decrypted[1] + "/"
-    tempstr = tempstr + decrypted[2] + "/"
-    global informatica_qr_string
+    tempstr = tempstr + decrypted[2]
     if tempstr == informatica_qr_string:
-        idnp = str(decrypted[3])
         global today
         prezent("informatica", idnp, today)
         print("Presence is set")
@@ -335,6 +357,7 @@ def informatica():
     
 @app.route('/matematica', methods=['GET', 'POST'])
 def matematica():
+    global stream_key
     data = request.get_json()
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -342,12 +365,15 @@ def matematica():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    idnp = str(decrypted[1])
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     tempstr = decrypted[0] + "/"
     tempstr = tempstr + decrypted[1] + "/"
-    tempstr = tempstr + decrypted[2] + "/"
+    tempstr = tempstr + decrypted[2]
     global matematica_qr_string
     if tempstr == matematica_qr_string:
-        idnp = str(decrypted[3])
         global today
         prezent("matematica", idnp, today)
         print("Presence is set")
@@ -358,6 +384,7 @@ def matematica():
     
 @app.route('/romana', methods=['GET', 'POST'])
 def romana():
+    global stream_key
     data = request.get_json()
     data_string = str(data['secretkey'])
     data_byte = bytes(data_string, 'ISO-8859-1')
@@ -365,14 +392,17 @@ def romana():
     global temp_pr
     decrypted = rsa.decrypt(data_byte, temp_pr).decode()
     decrypted = decrypted.split("/")
+    idnp = str(decrypted[1])
+    decrypted = str(decrypted[0])
+    decrypted = (streamCipher.decrypt(decrypted, stream_key)).lower()
+    decrypted = decrypted.split("/")
     tempstr = decrypted[0] + "/"
     tempstr = tempstr + decrypted[1] + "/"
-    tempstr = tempstr + decrypted[2] + "/"
+    tempstr = tempstr + decrypted[2]
     global romana_qr_string
     if tempstr == romana_qr_string:
-        idnp = str(decrypted[3])
         global today
-        prezent("romana", idnp, today)
+        #prezent("romana", idnp, today)
         print("Presence is set")
         return("Presence is set. Have a nice lesson!")
     else:
@@ -404,20 +434,18 @@ def delete_old_romana_qr():
         im = Image.open('frontend/src/assets/qrcodes/romana/empty_qrcode.png')
         im.save(path)
 
-def get_random_string(length):
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
-
 s = sched.scheduler(time.time, time.sleep)
 
 def generate_qr(sc):
+    global stream_key
+    
     global entrance_qr_string
     place = "entrance"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string + "/"
+    qr_string = place + "/" + time + "/" + rand_string
     entrance_qr_string = qr_string
+    qr_string = streamCipher.encrypt(qr_string.upper(), stream_key)
     img = qrcode.make(qr_string)
     img.save(path)
     
@@ -425,8 +453,9 @@ def generate_qr(sc):
     place = "engleza"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string + "/"
+    qr_string = place + "/" + time + "/" + rand_string
     engleza_qr_string = qr_string
+    qr_string = streamCipher.encrypt(qr_string.upper(), stream_key)
     img = qrcode.make(qr_string)
     img.save(path_engleza)
     
@@ -434,8 +463,9 @@ def generate_qr(sc):
     place = "informatica"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string + "/"
+    qr_string = place + "/" + time + "/" + rand_string
     informatica_qr_string = qr_string
+    qr_string = streamCipher.encrypt(qr_string.upper(), stream_key)
     img = qrcode.make(qr_string)
     img.save(path_informatica)
     
@@ -443,8 +473,9 @@ def generate_qr(sc):
     place = "matematica"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string + "/"
+    qr_string = place + "/" + time + "/" + rand_string
     matematica_qr_string = qr_string
+    qr_string = streamCipher.encrypt(qr_string.upper(), stream_key)
     img = qrcode.make(qr_string)
     img.save(path_matematica)
     
@@ -452,11 +483,13 @@ def generate_qr(sc):
     place = "romana"
     time = today
     rand_string = get_random_string(8)
-    qr_string = place + "/" + time + "/" + rand_string + "/"
+    qr_string = place + "/" + time + "/" + rand_string
     romana_qr_string = qr_string
+    qr_string = streamCipher.encrypt(qr_string.upper(), stream_key)
     img = qrcode.make(qr_string)
     img.save(path_romana)
-    sc.enter(5, 1, generate_qr, (sc,))
+    
+    sc.enter(7, 1, generate_qr, (sc,))
 
 s.enter(1, 1, generate_qr, (s,))
 

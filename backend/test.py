@@ -19,7 +19,7 @@ p_key_e = p_key_map['public_e']
 p_key = rsa.PublicKey(int(p_key_n),int(p_key_e))
 print(p_key)
 
-qr_message = requests.get("http://127.0.0.1:5000/sendentrancestring")
+qr_message = requests.get("http://127.0.0.1:5000/sendromanastring")
 qr_message = str(qr_message.text)
 print(qr_message)
 
@@ -29,7 +29,7 @@ print(qr_message)
 # with open('keys/privateKey.pem', 'rb') as p:
 #     private_key = rsa.PrivateKey.load_pkcs1(p.read())
 
-idnp = str("0123456789")
+idnp = str("/0123456789")
 
 data_string = qr_message + idnp
 
