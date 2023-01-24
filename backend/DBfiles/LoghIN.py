@@ -15,7 +15,7 @@ def signIn(username, passwd):
     ans = []
     try:
         cur.execute("select passwd, id, rol from "  +
-                    "(select id_elev_user as id, username, passwd, rol from sql7588695.user_elevi " +
+                    "(select id_elev_user as id , username, passwd, rol from sql7588695.user_elevi " +
                     "union " +
                     "select * from sql7588695.user_parinte " +
                     "union " +
@@ -25,6 +25,10 @@ def signIn(username, passwd):
         # print(user)
         if(user[2] == 'elev'):
             cur.execute("select idnp from sql7588695.elevi WHERE (`id_elev` = '" + str(user[1]) + "');")
+        elif(user[2] == 'parinte'):
+            cur.execute("select idnp from sql7588695.parinti WHERE (`id_parinte` = '" + str(user[1]) + "');")
+        elif (user[2] == 'profesor'):
+            cur.execute("select idnp from sql7588695.profesori WHERE (`id_profesori` = '" + str(user[1]) + "');")
         idnp_user = cur.fetchall()[0][0]
         # print(idnp_user)
         if (user[0] == "None"):
