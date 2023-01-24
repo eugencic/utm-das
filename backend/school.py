@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from threading import Thread
 from PIL import Image
+import requests
 import sched
 import time
 import os
@@ -239,6 +240,29 @@ def sendMatematicaString():
 def sendRomanaString():
     return(romana_qr_string)
 
+@app.route('/receiveqr', methods=['GET', 'POST'])
+def receiveqr():
+    myobj = request.get_json()
+    data_string = str(myobj['secretkey'])
+    data_byte = bytes(data_string, 'ISO-8859-1')
+    global temp_pk
+    global temp_pr
+    decrypted = rsa.decrypt(data_byte, temp_pr).decode()
+    decrypted = decrypted.split("/")
+    route = str(decrypted[0])
+    print(route)
+    if route == "entrance":
+        x = requests.post("http://127.0.0.1:5000/entrance", json = myobj)
+    elif route == "engleza":
+        x = requests.post("http://127.0.0.1:5000/engleza", json = myobj)
+    elif route == "informatica":
+        x = requests.post("http://127.0.0.1:5000/informatica", json = myobj)
+    elif route == "matematica":
+        x = requests.post("http://127.0.0.1:5000/matematica", json = myobj)
+    elif route == "romana":
+        x = requests.post("http://127.0.0.1:5000/romana", json = myobj)
+    return('QR Code received')
+
 @app.route('/entrance', methods=['GET', 'POST'])
 def entrance():
     data = request.get_json()
@@ -256,6 +280,7 @@ def entrance():
         idnp = str(decrypted[3])
         global today
         prezent_liceu(idnp, today)
+        print(idnp)
         print("Presence is set")
         return("Presence is set. Have a nice school day!")
     else:
@@ -431,7 +456,7 @@ def generate_qr(sc):
     romana_qr_string = qr_string
     img = qrcode.make(qr_string)
     img.save(path_romana)
-    sc.enter(15, 1, generate_qr, (sc,))
+    sc.enter(5, 1, generate_qr, (sc,))
 
 s.enter(1, 1, generate_qr, (s,))
 
