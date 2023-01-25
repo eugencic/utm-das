@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -18,14 +16,9 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -40,7 +33,6 @@ import java.util.Objects;
 import javax.crypto.Cipher;
 
 public class StudentActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +55,6 @@ public class StudentActivity extends AppCompatActivity {
 
     ActivityResultLauncher<ScanOptions> qrLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
-
             SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
             String hostAdr = sh.getString("HOST_ADR", "");
             String idnp = sh.getString("IDNP", "");
@@ -72,7 +63,6 @@ public class StudentActivity extends AppCompatActivity {
             BigInteger n = new BigInteger(Objects.requireNonNull(publicKey_map.get("public_n")));
             BigInteger e = new BigInteger(Objects.requireNonNull(publicKey_map.get("public_e")));
             RSAPublicKeySpec publickey = new RSAPublicKeySpec(n, e);
-
 
             PublicKey pub;
             try {
@@ -84,7 +74,6 @@ public class StudentActivity extends AppCompatActivity {
 
             String text = result.getContents() + "/" + idnp;
 
-            // encript :
             byte[] encripted = encrypt(text, pub);
             String encripted_string = new String(encripted, StandardCharsets.ISO_8859_1);
 
@@ -96,23 +85,17 @@ public class StudentActivity extends AppCompatActivity {
             }
 
             postSendJson(sender_jo);
-
         }
-
-
     });
 
     public HashMap<String, String> getPublicKey() {
         try {
-
             SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
             String hostAdr = sh.getString("HOST_ADR", "");
-
             String url = hostAdr + "/publickey";
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("GET");
-            int responseCode = con.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -120,7 +103,6 @@ public class StudentActivity extends AppCompatActivity {
                 response.append(inputLine);
             }
             in.close();
-//        System.out.println(response.toString());
             String sjson = response.toString();
             Gson gson = new Gson();
             Type type = new TypeToken<HashMap<String, String>>() {
@@ -144,10 +126,8 @@ public class StudentActivity extends AppCompatActivity {
 
     public void postSendJson(JSONObject jo) {
         try {
-
             SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
             String hostAdr = sh.getString("HOST_ADR", "");
-
             String url = hostAdr + "/receiveqr";
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -169,7 +149,6 @@ public class StudentActivity extends AppCompatActivity {
             }
             in.close();
         } catch (Exception ignored) {
-
         }
     }
 
