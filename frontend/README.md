@@ -1,19 +1,16 @@
-# frontend
+# School - Frontend
 
 ## Project setup
+### Install
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Run
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Technologies
+* Code editor : Visual Studio Code
+* Programming language : Vue 3.2

@@ -61,9 +61,9 @@ class Stream:
 
 if __name__ == '__main__':
     streamCipher = Stream()
-    message = (input('Enter the text you want to encrypt: ').upper())
+    message = (input('Enter the text you want to encrypt: ').upper()).replace(" ", "")
     key = (input('Enter the secret message: ').upper()).replace(" ", "")
     encrypted_message = streamCipher.encrypt(message, key)
     print("Encrypted message: ", encrypted_message)
-    decrypted_message = (streamCipher.decrypt(encrypted_message, key)).lower()
+    decrypted_message = streamCipher.decrypt(encrypted_message, key)
     print("Decrypted message: ", decrypted_message)
