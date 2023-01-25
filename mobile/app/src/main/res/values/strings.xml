@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">KidSafe</string>
+    <string-array name="Role">
+        <item>Student</item>
+        <item>Parent</item>
+    </string-array>
+</resources>
