@@ -402,7 +402,7 @@ def romana():
     global romana_qr_string
     if tempstr == romana_qr_string:
         global today
-        #prezent("romana", idnp, today)
+        prezent("romana", idnp, today)
         print("Presence is set")
         return("Presence is set. Have a nice lesson!")
     else:
