@@ -1,21 +1,16 @@
 package com.example.kidsafe;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
-
-import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -29,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
-
     TextInputEditText username, password;
 
     @Override
@@ -46,17 +40,14 @@ public class LoginActivity extends AppCompatActivity {
         MaterialButton logInButton = findViewById(R.id.materialButton1);
 
         logInButton.setOnClickListener(view -> logIn());
-
     }
 
     private void logIn() {
-
         HttpURLConnection con = null;
         try {
             JsonObject postData = new JsonObject();
             postData.addProperty("username", Objects.requireNonNull(username.getText()).toString());
             postData.addProperty("password", Objects.requireNonNull(password.getText()).toString());
-
 
             SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
             String hostAdr = sh.getString("HOST_ADR", "");
@@ -70,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             con.setDoOutput(true);
             con.setDoInput(true);
             con.setChunkedStreamingMode(0);
-
 
             OutputStream out = new BufferedOutputStream(con.getOutputStream());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -127,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (Objects.equals(rol, "parinte")) {
                     startActivity(new Intent(LoginActivity.this, ParentActivity.class));
                 }
-
                 finish();
             }
 
@@ -140,6 +129,5 @@ public class LoginActivity extends AppCompatActivity {
                 con.disconnect();
             }
         }
-
     }
 }

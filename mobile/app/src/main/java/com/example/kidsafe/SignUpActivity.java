@@ -17,17 +17,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -35,13 +29,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
-
     TextInputEditText etSignUpID;
     TextInputLayout SignUpID;
-
     TextInputEditText etSignUpPass;
     TextInputLayout SignUpPass;
-
     TextInputEditText parentID, fullName, email, institution, form, username;
 
     @Override
@@ -68,7 +59,6 @@ public class SignUpActivity extends AppCompatActivity {
         etSignUpID.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -80,14 +70,12 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
 
         etSignUpPass.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -113,7 +101,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
 
@@ -126,8 +113,6 @@ public class SignUpActivity extends AppCompatActivity {
         if (SignUpID.getError() == null && SignUpPass.getError() == null &&
                 !TextUtils.isEmpty(Objects.requireNonNull(etSignUpID.getText()).toString()) &&
                 !TextUtils.isEmpty(Objects.requireNonNull(etSignUpPass.getText()).toString())) {
-
-
             HttpURLConnection con = null;
             try {
                 JsonObject postData = new JsonObject();
@@ -138,7 +123,6 @@ public class SignUpActivity extends AppCompatActivity {
                 postData.addProperty("clasa", Objects.requireNonNull(form.getText()).toString());
                 postData.addProperty("liceu", Objects.requireNonNull(institution.getText()).toString());
                 postData.addProperty("parinte", Objects.requireNonNull(parentID.getText()).toString());
-
 
                 SharedPreferences sh = getSharedPreferences("MySharedPref", Context.MODE_PRIVATE);
                 String hostAdr = sh.getString("HOST_ADR", "");
@@ -152,7 +136,6 @@ public class SignUpActivity extends AppCompatActivity {
                 con.setDoOutput(true);
                 con.setDoInput(true);
                 con.setChunkedStreamingMode(0);
-
 
                 OutputStream out = new BufferedOutputStream(con.getOutputStream());
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -174,7 +157,6 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
 
-
             Toast toast = Toast.makeText(SignUpActivity.this, "User registered successfully", Toast.LENGTH_LONG);
             toast.getView().setBackgroundResource(R.drawable.toast_blue);
             toast.show();
@@ -187,5 +169,4 @@ public class SignUpActivity extends AppCompatActivity {
             toast.show();
         }
     }
-
 }
