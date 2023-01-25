@@ -1,13 +1,12 @@
-from DBfiles.DbConnector import newConnect
+from database.db_connector import new_connect
 from mysql.connector import Error
-import numpy as np
 
-# ans is [elev_name_surname , presence, error code ]
-# 200 succesfull
+# answer is [elev_name_surname , presence, error code ]
+# 200 successful
 # 404 not found
 
-def checkElevPrezenta(tabel, idnp, data):
-    db = newConnect()
+def check_elev_prezenta(tabel, idnp, data):
+    db = new_connect()
     cur = db.cursor()
     ans = []
     nume_prenume_elev = ""
@@ -17,14 +16,15 @@ def checkElevPrezenta(tabel, idnp, data):
         cur.execute("SELECT nume_prenume FROM sql7588695.elevi WHERE (`idnp` = '" + idnp + "')")
         nume_prenume_elev = cur.fetchall()[0][0]
         cur.execute("SELECT nume_prenume, `" + str(data) + "` FROM sql7588695." + tabel + " "
-                    "WHERE ( `id_elev` = '" + str(id_copil) + "');")
+                                                                                          "WHERE ( `id_elev` = '" + str(
+            id_copil) + "');")
         pres = cur.fetchall()[0]
         ans = [pres[0], pres[1], 200]
     except Error as error:
         # print(error)
         pres = cur.fetchall()
-        if (pres == []):
-            print("Error wrong idnp")
+        if not pres:
+            print("Error. Wrong idnp")
             ans = [nume_prenume_elev, '', 404]
     finally:
         cur.close()
@@ -32,27 +32,28 @@ def checkElevPrezenta(tabel, idnp, data):
 
     return ans
 
-def prezentaGenerala(idnp, data):
-    ans = []
-    ans.append(checkElevPrezenta('prezenta_liceu',idnp, data))
+
+def prezenta_generala(idnp, data):
+    ans = [check_elev_prezenta('prezenta_liceu', idnp, data)]
     ans[0].pop()
     ans[0].append("Prezenta in liceu")
-    ans.append(checkElevPrezenta('romana', idnp, data))
+    ans.append(check_elev_prezenta('romana', idnp, data))
     ans[1].pop()
     ans[1].append("Romana")
-    ans.append(checkElevPrezenta('engleza', idnp, data))
+    ans.append(check_elev_prezenta('engleza', idnp, data))
     ans[2].pop()
     ans[2].append("Engleza")
-    ans.append(checkElevPrezenta('matematica', idnp, data))
+    ans.append(check_elev_prezenta('matematica', idnp, data))
     ans[3].pop()
     ans[3].append("Matematica")
-    ans.append(checkElevPrezenta('informatica', idnp, data))
+    ans.append(check_elev_prezenta('informatica', idnp, data))
     ans[4].pop()
     ans[4].append("Inforamtica")
     return ans
 
-def CheckPrezentaAll(tabel, idnp):
-    db = newConnect()
+
+def check_prezenta_all(tabel, idnp):
+    db = new_connect()
     cur = db.cursor()
     ans = []
     nume_prenume_elev = ""
@@ -68,8 +69,8 @@ def CheckPrezentaAll(tabel, idnp):
         ans.append(200)
     except:
         pres = cur.fetchall()
-        if (pres == []):
-            print("Error wrong idnp")
+        if not pres:
+            print("Error. Wrong idnp")
             ans = [nume_prenume_elev, '', 404]
     finally:
         cur.close()
@@ -77,34 +78,36 @@ def CheckPrezentaAll(tabel, idnp):
 
     return ans
 
-def prezentaSemestru(idnp):
-    ans = []
-    ans.append(CheckPrezentaAll('prezenta_liceu', idnp))
+
+def prezenta_semestru(idnp):
+    ans = [check_prezenta_all('prezenta_liceu', idnp)]
     ans[0].pop()
     ans[0].append("Prezenta in liceu")
-    ans.append(CheckPrezentaAll('romana', idnp))
+    ans.append(check_prezenta_all('romana', idnp))
     ans[1].pop()
     ans[1].append("Romana")
-    ans.append(CheckPrezentaAll('engleza', idnp))
+    ans.append(check_prezenta_all('engleza', idnp))
     ans[2].pop()
     ans[2].append("Engleza")
-    ans.append(CheckPrezentaAll('matematica', idnp))
+    ans.append(check_prezenta_all('matematica', idnp))
     ans[3].pop()
     ans[3].append("Matematica")
-    ans.append(CheckPrezentaAll('informatica', idnp))
+    ans.append(check_prezenta_all('informatica', idnp))
     ans[4].pop()
     ans[4].append("Informatica")
     return ans
 
-def tuptolistConvert(tup):
+
+def tuptolist_convert(tup):
     result = []
     for t in tup:
         for x in t:
             result.append(x)
     return result
 
-def presenceObiect(tabel):
-    db = newConnect()
+
+def presence_obiect(tabel):
+    db = new_connect()
     cur = db.cursor()
     ans = []
     try:
